@@ -52,7 +52,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def connect_buttons(self):
         self.helpAction.triggered.connect(self.show_helpDialog)
-        self.actionChange_Theme.triggered.connect(lambda: self.toggle_stylesheet(os.path.dirname(os.path.realpath(__file__)) + '\\..\\themes\\darkstyle\\darkstyle.qss'))
 
     def connect_signals(self):
         self.helpDialog.s_windowClose.connect(lambda: self.setEnabled(True))
