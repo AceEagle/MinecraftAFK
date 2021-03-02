@@ -11,7 +11,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-spawnerViewUiPath = os.path.dirname(os.path.realpath(__file__)) + "\\spawnerUi.ui"
+spawnerViewUiPath = os.path.dirname(os.path.realpath(__file__)) + "\\spawnerViewUi.ui"
 Ui_spawnerView, QtBaseClass = uic.loadUiType(spawnerViewUiPath)
 
 
@@ -25,5 +25,3 @@ class SpawnerView(QWidget, Ui_spawnerView):
         super(SpawnerView, self).__init__()
         self.model = model
         self.setupUi(self)
-
-    def

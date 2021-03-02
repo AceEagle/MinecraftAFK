@@ -1,11 +1,3 @@
-__author__ = "Mathieu Vigneault"
-__copyright__ = "Copyright 2021, Mathieu Vigneault"
-__credits__ = ["Mathieu Vigneault"]
-__version__ = "0.1"
-__maintainer__ = "Marc-André Vigneault"
-__email__ = "mathieu.vigneault.19@gmail.com"
-__status__ = "Production"
-
 import numpy as np
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import Qt

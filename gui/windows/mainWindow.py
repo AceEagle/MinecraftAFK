@@ -49,3 +49,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.helpDialog = HelpDialog()
         self.spawnerView = SpawnerView(model=self.model)
         self.fishingView = FishingView(model=self.model)
+
+    def connect_buttons(self):
+        self.helpAction.triggered.connect(self.show_helpDialog)
+        self.actionChange_Theme.triggered.connect(lambda: self.toggle_stylesheet(os.path.dirname(os.path.realpath(__file__)) + '\\..\\themes\\darkstyle\\darkstyle.qss'))
+
+    def connect_signals(self):
+        self.helpDialog.s_windowClose.connect(lambda: self.setEnabled(True))
+
+    def show_helpDialog(self):
+        log.info('Help Dialog Opened')
+        self.setEnabled(False)
+        self.helpDialog.exec_()
+
+    def toggle_stylesheet(self, filePath):
+        '''
+        Toggle the stylesheet to use the desired path in the Qt resource
+        system (prefixed by `:/`) or generically (a path to a file on
+        system).
+
+        :path:      A full path to a resource or file on system
+        '''
+
+        # get the QApplication instance,  or crash if not set
+        app = QApplication.instance()
+        if app is None:
+            raise RuntimeError("No Qt Application found.")
+
+        styleFile = qss_file = open(filePath).read()
+        app.setStyleSheet(styleFile)
