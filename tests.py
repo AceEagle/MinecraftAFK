@@ -1,15 +1,26 @@
 import win32api
 import win32gui
 import win32con
-
+import time
+from pywinauto import Desktop
 
 def click(x, y):
-    hWnd = win32gui.FindWindow(None, "Minecraft* 1.16.5 - Singleplayer")
+    windowslist = []
+    windows = Desktop(backend="uia").windows()
+    for w in windows:
+        windowslist.append(w.window_text())
+    windowtitle = str([s for s in windowslist if "Minecraft*" in s][0])
+    print(windowtitle)
+
+    hWnd = win32gui.FindWindow(None, windowtitle)
+    print(hWnd)
     lParam = win32api.MAKELONG(x, y)
 
-    hWnd1= win32gui.FindWindowEx(hWnd, None, None, None)
-    win32gui.SendMessage(hWnd1, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, lParam)
-    win32gui.SendMessage(hWnd1, win32con.WM_LBUTTONUP, None, lParam)
+    #hWnd1= win32gui.FindWindowEx(hWnd, None, None, None)
+    #print(hWnd1)
+    win32gui.SendMessage(hWnd, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, lParam)
+    time.sleep(5)
+    win32gui.SendMessage(hWnd, win32con.WM_LBUTTONUP, None, lParam)
 
 while True:
-    click(100,100)
+    click(50,50)

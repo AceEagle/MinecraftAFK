@@ -28,14 +28,3 @@ class ParametersTableView(QWidget):
         self.table_view.setModel(self.table_model)
         self.setup_table_visuals()
         self.table_view.clicked.connect(self.get_selected_index_on_click)
-
-    def load_data(self, jsonData):
-        for parameter in jsonData['[all]'].keys():
-            a = [""]
-            a.append(parameter)
-            for i in range(2):
-                try:
-                    a.append(jsonData['[all]'][parameter]["p{}".format(i+1)])
-                except Exception:
-                    a.append("")
-            self.add_data_row(a)
