@@ -4,7 +4,11 @@ from PyQt5.Qt import QColor, QPalette
 import os
 import mcpi
 from PyQt5 import uic
-
+import win32api
+import win32gui
+import win32con
+import time
+from pywinauto import Desktop
 
 import logging
 
@@ -25,3 +29,18 @@ class SpawnerView(QWidget, Ui_spawnerView):
         super(SpawnerView, self).__init__()
         self.model = model
         self.setupUi(self)
+        self.windowslist = []
+        self.windows = Desktop(backend="uia").windows()
+
+    def getWindowName(self):
+        windows = Desktop(backend="uia").windows()
+        for w in windows:
+            self.windowslist.append(w.window_text())
+        self.windowtitle = str([s for s in self.windowslist if "Minecraft*" in s][0])
+
+    def actionInWindow(self, time):
+        hWnd = win32gui.FindWindow(None, self.windowtitle)
+        lParam = win32api.MAKELONG(50, 50)
+        win32gui.SendMessage(hWnd, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, lParam)
+        time.sleep(time)
+        win32gui.SendMessage(hWnd, win32con.WM_LBUTTONUP, None, lParam)

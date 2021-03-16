@@ -30,6 +30,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.connect_buttons()
         self.connect_signals()
 
+
+
     def setup_window_tabs(self):
         self.tabWidget = QTabWidget()
         self.setCentralWidget(self.tabWidget)
