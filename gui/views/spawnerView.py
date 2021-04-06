@@ -29,18 +29,43 @@ class SpawnerView(QWidget, Ui_spawnerView):
         super(SpawnerView, self).__init__()
         self.model = model
         self.setupUi(self)
-        self.windowslist = []
-        self.windows = Desktop(backend="uia").windows()
 
-    def getWindowName(self):
+
+    def connect_buttons(self):
+        self.start.clicked.connect(self.startSpawner(self.HWRange, self.SHRange))
+        self.stop.clicked.connect(self.stopSpawner())
+
+
+    def startSpawner(self, HWR, SHR):
+        self.findWindow(50, 50)
+        self.startStatus = True
+        while self.startStatus is True:
+            self.clickWindow(SHR)
+            time.sleep(HWR*60)
+
+
+    def stopSpawner(self):
+        self.startStatus = False
+
+
+    def resetSpawner(self):
+        self.stopSpawner()
+        self.HWRange = 0.00
+        self.SHRange = 0,00
+
+
+    def findWindow(self, x, y):
+        windowslist = []
         windows = Desktop(backend="uia").windows()
         for w in windows:
-            self.windowslist.append(w.window_text())
-        self.windowtitle = str([s for s in self.windowslist if "Minecraft*" in s][0])
+            windowslist.append(w.window_text())
+        windowtitle = str([s for s in windowslist if "Minecraft*" in s][0])
+        print(f"fWindow found: {windowtitle}")
 
-    def actionInWindow(self, time):
-        hWnd = win32gui.FindWindow(None, self.windowtitle)
-        lParam = win32api.MAKELONG(50, 50)
-        win32gui.SendMessage(hWnd, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, lParam)
-        time.sleep(time)
-        win32gui.SendMessage(hWnd, win32con.WM_LBUTTONUP, None, lParam)
+        self.hWnd = win32gui.FindWindow(None, windowtitle)
+        self.lParam = win32api.MAKELONG(x, y)
+
+    def clickWindow(self, SHR):
+        win32gui.SendMessage(self.hWnd, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, self.lParam)
+        time.sleep(SHR)
+        win32gui.SendMessage(self.hWnd, win32con.WM_LBUTTONUP, None, self.lParam)

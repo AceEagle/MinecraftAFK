@@ -19,8 +19,12 @@ def click(x, y):
     #hWnd1= win32gui.FindWindowEx(hWnd, None, None, None)
     #print(hWnd1)
     win32gui.SendMessage(hWnd, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, lParam)
-    time.sleep(5)
     win32gui.SendMessage(hWnd, win32con.WM_LBUTTONUP, None, lParam)
 
 while True:
     click(50,50)
+    time.sleep(1)
+    click(50, 50)
+    time.sleep(1)
+    click(50, 50)
+    time.sleep(20)
