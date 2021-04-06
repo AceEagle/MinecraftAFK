@@ -20,28 +20,35 @@ Ui_spawnerView, QtBaseClass = uic.loadUiType(spawnerViewUiPath)
 
 
 class SpawnerView(QWidget, Ui_spawnerView):
-    s_data_changed = pyqtSignal(dict)
-    s_data_acquisition_done = pyqtSignal()
-
-    # Initializing Functions
 
     def __init__(self, model=None, controller=None):
         super(SpawnerView, self).__init__()
         self.model = model
         self.setupUi(self)
+        self.connect_buttons()
 
 
     def connect_buttons(self):
-        self.start.clicked.connect(self.startSpawner(self.HWRange, self.SHRange))
-        self.stop.clicked.connect(self.stopSpawner())
+        self.start.clicked.connect(self.startSpawner)
+        self.stop.clicked.connect(self.stopSpawner)
+        self.HWRange.valueChanged.connect(lambda: self.changeHWRange(self.HWRange.value()))
+        self.SHRange.valueChanged.connect(lambda: self.changeSHRange(self.SHRange.value()))
+
+    def changeSHRange(self, shr):
+        self.SHRangeValue = int(shr)
 
 
-    def startSpawner(self, HWR, SHR):
+    def changeHWRange(self, hwr):
+        self.HWRangeValue = int(hwr)
+
+
+    def startSpawner(self):
         self.findWindow(50, 50)
         self.startStatus = True
+        print(self.HWRange)
         while self.startStatus is True:
-            self.clickWindow(SHR)
-            time.sleep(HWR*60)
+            self.clickWindow()
+            time.sleep(int(self.HWRangeValue*60))
 
 
     def stopSpawner(self):
@@ -65,7 +72,12 @@ class SpawnerView(QWidget, Ui_spawnerView):
         self.hWnd = win32gui.FindWindow(None, windowtitle)
         self.lParam = win32api.MAKELONG(x, y)
 
-    def clickWindow(self, SHR):
+    def clickWindow(self):
         win32gui.SendMessage(self.hWnd, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, self.lParam)
-        time.sleep(SHR)
+        win32gui.SendMessage(self.hWnd, win32con.WM_LBUTTONUP, None, self.lParam)
+        time.sleep(self.SHRangeValue)
+        win32gui.SendMessage(self.hWnd, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, self.lParam)
+        win32gui.SendMessage(self.hWnd, win32con.WM_LBUTTONUP, None, self.lParam)
+        time.sleep(self.SHRangeValue)
+        win32gui.SendMessage(self.hWnd, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, self.lParam)
         win32gui.SendMessage(self.hWnd, win32con.WM_LBUTTONUP, None, self.lParam)
