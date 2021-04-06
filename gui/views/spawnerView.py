@@ -4,11 +4,14 @@ from PyQt5.Qt import QColor, QPalette
 import os
 import mcpi
 from PyQt5 import uic
+import pythoncom
 import win32api
 import win32gui
 import win32con
+import win32com
 import time
 from pywinauto import Desktop
+from threadWorker import Worker
 
 import logging
 
@@ -25,14 +28,25 @@ class SpawnerView(QWidget, Ui_spawnerView):
         super(SpawnerView, self).__init__()
         self.model = model
         self.setupUi(self)
+        self.controllerThread = QThread()
+        self.spawnWorker = None
+        self.create_threads()
         self.connect_buttons()
-
+        self.findWindow(50, 50)
 
     def connect_buttons(self):
-        self.start.clicked.connect(self.startSpawner)
+        self.start.clicked.connect(self.controllerThread.run())
         self.stop.clicked.connect(self.stopSpawner)
         self.HWRange.valueChanged.connect(lambda: self.changeHWRange(self.HWRange.value()))
         self.SHRange.valueChanged.connect(lambda: self.changeSHRange(self.SHRange.value()))
+
+
+    def create_threads(self, *args):
+        pythoncom.CoInitialize()
+        self.spawnWorker = Worker(self.startSpawner, *args)
+        self.spawnWorker.moveToThread(self.controllerThread)
+        self.controllerThread.started.connect(self.spawnWorker.run)
+
 
     def changeSHRange(self, shr):
         self.SHRangeValue = int(shr)
@@ -42,8 +56,11 @@ class SpawnerView(QWidget, Ui_spawnerView):
         self.HWRangeValue = int(hwr)
 
 
-    def startSpawner(self):
-        self.findWindow(50, 50)
+    def startSpawner(self, *args):
+        pythoncom.CoInitialize()
+        xl = win32com.client.Dispatch(
+            pythoncom.CoGetInterfaceAndReleaseStream(self.hWnd, pythoncom.IID_IDispatch)
+        )
         self.startStatus = True
         print(self.HWRange)
         while self.startStatus is True:
